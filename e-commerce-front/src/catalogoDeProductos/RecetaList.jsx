@@ -193,7 +193,7 @@ function RecetaList({ variant = "catalog" }) {
   };
 
   // Handler del botón "Agregar al carrito"
-  const handleCartClick = (event, receta) => {
+  const handleCartClick = async (event, receta) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -202,8 +202,12 @@ function RecetaList({ variant = "catalog" }) {
       return;
     }
 
-    addToCart(receta);
-    toast.success("¡Agregado al carrito!"); // Notificación de éxito
+    try {
+      await addToCart(receta);
+      toast.success("¡Agregado al carrito!"); // Notificación de éxito
+    } catch (err) {
+      toast.error(err?.message ?? "No hay stock suficiente para agregar la receta");
+    }
   };
 
   // Renderizamos la lista de recetas con sus filtros.

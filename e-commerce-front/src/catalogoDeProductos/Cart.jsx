@@ -70,7 +70,7 @@ function Cart() {
   // Finaliza la compra: crea el pedido en el backend, vacía el carrito y redirige.
   const handleFinalizarCompra = async () => {
     try {
-      await dispatch(createPedido({ total })).unwrap();
+      await dispatch(createPedido({ total, cartItems })).unwrap();
       clearCart();
       toast.success("¡Compra realizada con éxito! 🎉");
       navigate("/mis-compras");

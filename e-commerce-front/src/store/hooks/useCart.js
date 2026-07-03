@@ -33,7 +33,7 @@ export function useCart() {
   const addToCart = useCallback(
     (product) => {
       const recetaId = product.recetaId ?? product.idReceta ?? product.id;
-      dispatch(addItemToCart({ recetaId, cantidad: 1 }));
+      return dispatch(addItemToCart({ recetaId, cantidad: 1 })).unwrap();
     },
     [dispatch],
   );
