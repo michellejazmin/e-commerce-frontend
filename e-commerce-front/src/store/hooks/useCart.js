@@ -12,21 +12,43 @@ import {
   selectCartError,
 } from "../cartSlice";
 
+let cartBootstrapPromise = null;
+
+const bootstrapCartOnce = (dispatch) => {
+  if (cartBootstrapPromise) {
+    return cartBootstrapPromise;
+  }
+
+  cartBootstrapPromise = dispatch(fetchCart())
+    .unwrap()
+    .finally(() => {
+      cartBootstrapPromise = null;
+    });
+
+  return cartBootstrapPromise;
+};
+
 export function useCart() {
   const dispatch = useDispatch();
   const cartItems = useSelector(selectCartItems);
+  const cartId = useSelector((state) => state.cart.cartId);
   const total = useSelector(selectCartTotal);
   const loading = useSelector(selectCartLoading);
   const error = useSelector(selectCartError);
   // Estado de sesión desde Redux (rehidratado vía cookie).
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  // Cuando hay sesión iniciada, cargamos el carrito desde el backend.
+  // Cuando hay sesión iniciada, cargamos el carrito una sola vez por sesión.
   useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(fetchCart());
+    if (!isAuthenticated) {
+      cartBootstrapPromise = null;
+      return;
     }
-  }, [dispatch, isAuthenticated]);
+
+    if (!cartId && !loading) {
+      bootstrapCartOnce(dispatch);
+    }
+  }, [cartId, dispatch, isAuthenticated, loading]);
 
   // Agrega un producto al carrito. Resolvemos el recetaId desde las distintas
   // formas en que llega (receta del catálogo o item del carrito).
