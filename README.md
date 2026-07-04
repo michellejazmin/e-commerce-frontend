@@ -13,6 +13,5 @@
 
 ## Instrucciones
 Para levantar el proyecto, primero clonar el repositorio y luego ejecutar los siguientes comandos:
-1. `cd e-commerce-front`
-2. `npm install`
-3. `npm run dev`
+1. `npm install`
+2. `npm run dev`
